@@ -1,6 +1,8 @@
 package com.example.pokemonalea.service;
 
 import com.example.pokemonalea.persistence.PokemonDTO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -18,6 +20,8 @@ public class PokemonCache {
     private static final String GENERATION_RED = "/generation/1";
     private static final String POKEMON = "/pokemon";
 
+    Logger logger = LoggerFactory.getLogger(PokemonCache.class);
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Autowired
@@ -31,19 +35,18 @@ public class PokemonCache {
 
     private List<String> getRedPokemons() {
         PokeApiKeysResponse response = null;
-
+        String url = BASE_URL + GENERATION_RED;
         try {
-            response = restTemplate.getForObject(
-                    BASE_URL + GENERATION_RED,
-                    PokeApiKeysResponse.class);
+            response = restTemplate.getForObject(url, PokeApiKeysResponse.class);
+            logger.info("Request: " + url);
         } catch (RestClientException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
         }
 
         return response != null
                 ? response.pokemon_species.stream()
-                .map(ps -> ps.name)
-                .collect(Collectors.toList())
+                                            .map(ps -> ps.name)
+                                            .collect(Collectors.toList())
                 : Collections.emptyList();
     }
 
@@ -52,12 +55,12 @@ public class PokemonCache {
 
         for (String pokemonName: pokemonNames) {
             try {
-                PokemonDTO pokemon = restTemplate.getForObject(
-                        BASE_URL + POKEMON + "/" + pokemonName,
-                        PokemonDTO.class);
+                String url = BASE_URL + POKEMON + "/" + pokemonName;
+                PokemonDTO pokemon = restTemplate.getForObject(url, PokemonDTO.class);
                 pokemonDTOS.add(pokemon);
+                logger.info("Request: " + url);
             } catch (RestClientException e) {
-                System.out.println(e.getMessage());
+                logger.error(e.getMessage());
             }
         }
 

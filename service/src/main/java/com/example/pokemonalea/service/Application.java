@@ -1,6 +1,8 @@
 package com.example.pokemonalea.service;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +16,7 @@ import javax.annotation.PostConstruct;
 @EntityScan(basePackages = "${app.package}")
 @EnableJpaRepositories(basePackages = "${app.package}")
 public class Application {
+	Logger logger = LoggerFactory.getLogger(Application.class);
 	@Autowired
 	PokemonCache pokemonCache;
 
@@ -28,7 +31,8 @@ public class Application {
 
 	@PostConstruct
 	public void initializeMemory() {
-		System.out.println("Loading memory with poke api requests...");
+		logger.info("Loading cache memory with poke api requests...");
 		pokemonCache.start();
+		logger.info("The cache memory has been loaded");
 	}
 }
