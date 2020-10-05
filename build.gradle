@@ -1,0 +1,63 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot' version "${springBoot}"
+    id 'io.spring.dependency-management' version "${dependencyManagement}"
+}
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+}
+
+allprojects {
+    group 'com.example.springdocker'
+    version '0.0.1-SNAPSHOT'
+
+    sourceCompatibility = '1.8'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'java-library'
+    apply plugin: 'java'
+
+    test {
+        useJUnitPlatform()
+    }
+
+    bootJar {
+        enabled = false
+    }
+
+    jar {
+        enabled = false
+    }
+}
+
+project(':service') {
+    dependencies {
+        implementation project(':persistence')
+    }
+}
+
+bootJar {
+    enabled = false
+}
+
+task buildDockerImage(type: Exec) {
+    executable "sh"
+    args "-c", "docker build -t pokemon-alea ."
+}

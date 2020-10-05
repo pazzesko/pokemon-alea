@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  pokemon-alea:
+    image: pokemon-alea
+    container_name: pokemon-alea
+    ports:
+      - "8080:8080"
+      - "7080:7080"
+    networks:
+      - net
+
+networks:
+  net:

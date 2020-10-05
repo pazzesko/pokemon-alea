@@ -1,0 +1,4 @@
+rootProject.name = 'pokemon-alea'
+
+include 'persistence'
+include 'service'
