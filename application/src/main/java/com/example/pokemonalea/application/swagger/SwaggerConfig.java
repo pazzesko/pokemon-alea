@@ -1,4 +1,4 @@
-package com.example.pokemonalea.service;
+package com.example.pokemonalea.application.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

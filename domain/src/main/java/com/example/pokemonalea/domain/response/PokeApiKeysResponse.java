@@ -1,4 +1,4 @@
-package com.example.pokemonalea.service;
+package com.example.pokemonalea.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

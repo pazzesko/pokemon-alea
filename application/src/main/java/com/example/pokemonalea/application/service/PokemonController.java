@@ -1,8 +1,8 @@
-package com.example.pokemonalea.service;
+package com.example.pokemonalea.application.service;
 
-import com.example.pokemonalea.persistence.PokemonDTO;
-import com.example.pokemonalea.persistence.PokemonModel;
-import com.example.pokemonalea.persistence.PokemonRepository;
+import com.example.pokemonalea.domain.dto.PokemonDTO;
+import com.example.pokemonalea.domain.model.PokemonModel;
+import com.example.pokemonalea.persistence.repository.PokemonRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

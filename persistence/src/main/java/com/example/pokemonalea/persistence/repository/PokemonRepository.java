@@ -1,5 +1,6 @@
-package com.example.pokemonalea.persistence;
+package com.example.pokemonalea.persistence.repository;
 
+import com.example.pokemonalea.domain.model.PokemonModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

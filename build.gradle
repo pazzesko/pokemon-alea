@@ -47,9 +47,16 @@ subprojects {
     }
 }
 
-project(':service') {
+project(':application') {
     dependencies {
         implementation project(':persistence')
+        implementation project(':domain')
+    }
+}
+
+project(':persistence') {
+    dependencies {
+        implementation project(':domain')
     }
 }
 

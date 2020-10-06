@@ -1,5 +1,6 @@
-package com.example.pokemonalea.service;
+package com.example.pokemonalea.application.main;
 
+import com.example.pokemonalea.application.cache.PokemonCache;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import javax.annotation.PostConstruct;
 public class Application {
 	Logger logger = LoggerFactory.getLogger(Application.class);
 	@Autowired
-	PokemonCache pokemonCache;
+    PokemonCache pokemonCache;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);

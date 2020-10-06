@@ -1,4 +1,4 @@
-package com.example.pokemonalea.persistence;
+package com.example.pokemonalea.domain.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

@@ -31,32 +31,59 @@ CONTAINER ID        IMAGE               COMMAND                  CREATED        
 ```
 
 ## Modules
-The project is composed by 2 modules. The persistence module contains the model and persistence classes and the service module contains the controller, application and swagger configuration classes.
+The project is using DDD (Domain Driven Design). 
 ```bash
 pokemon-alea
 ├── persistence
-│   └── src
-│       └── main
-│           └── java
-│               └── com.example.pokemonalea.persistence
-│                   ├── PokemonDTO.java
-│                   ├── PokemonModel.java
-│                   └── PokemonRepository.java
-└── service
-    └── src
-        └── main
-            └── java
-                └── com.example.pokemonalea.service
-                    ├── Application.java
-                    ├── PokeApiKeysResponse.java
-                    ├── PokemonCache.java
-                    ├── PokemonController.java
-                    ├── PokemonSpecies.java
-                    └── SwaggerConfig.java
-
+├── domain
+└── application 
 ```
 
-## SwaggerUI
-Default swaggerUI: http://localhost:8080/pokemon-alea/swagger-ui.html
+The persistence layer contains the classes that interact with the database.
 
-PokemonController example: http://localhost:8080/pokemon-alea/swagger-ui.html#/pokemon-controller
+The domain layer contains the classes that define the business models and should be implementation agnostic.
+
+The application layer contains the classes that define the services which will interact with domain and persistance layers.
+
+
+## H2 Database
+The h2 console: `http://localhost:8080/pokemon-alea/h2-console`
+
+JDBC URL: `jdbc:h2:mem:pokedexdb`
+
+user: `ash`
+
+password: `ketchum`
+
+
+## SwaggerUI
+Default swaggerUI: `http://localhost:8080/pokemon-alea/swagger-ui.html`
+
+PokemonController example: `http://localhost:8080/pokemon-alea/swagger-ui.html#/pokemon-controller`
+
+
+## Examples
+### getTopBaseExperience
+```bash
+curl -X GET "http://localhost:8080/pokemon-alea/pokemon/topBaseExperience" -H "accept: */*"
+```
+### getTopHeight
+```bash
+curl -X GET "http://localhost:8080/pokemon-alea/pokemon/topHeight" -H "accept: */*"
+```
+### getTopWeight
+```bash
+curl -X GET "http://localhost:8080/pokemon-alea/pokemon/topWeight" -H "accept: */*"
+```
+### random
+```bash
+curl -X GET "http://localhost:8080/pokemon-alea/pokemon/random" -H "accept: */*"
+```
+### all
+```bash
+curl -X GET "http://localhost:8080/pokemon-alea/pokemon/all" -H "accept: */*"
+```
+### getPokemonById
+```bash
+curl -X GET "http://localhost:8080/pokemon-alea/pokemon/151" -H "accept: */*"
+```
