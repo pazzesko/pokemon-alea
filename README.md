@@ -10,8 +10,7 @@ To run the tests:
 ./gradlew test
 ```
 
-
-To build the jars for each module:
+To build the entire project:
 ```bash
 ./gradlew build 
 ```
@@ -20,6 +19,12 @@ To build the docker image:
 ```bash
 ./gradlew buildDockerImage
 ```
+
+Combined:
+```bash
+./gradlew build && ./gradlew buildDockerImage
+```
+
 Check with `docker images` that the image was created and tagged as `pokemon-alea`:
 ```bash
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
