@@ -17,12 +17,12 @@ import java.util.Random;
 public class PokemonController {
 
     private final PokemonRepository pokemonRepository;
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public PokemonController(PokemonRepository pokemonRepository) {
+    public PokemonController(PokemonRepository pokemonRepository, ModelMapper modelMapper) {
         this.pokemonRepository = pokemonRepository;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/pokemon/topWeight")
@@ -49,12 +49,12 @@ public class PokemonController {
     }
 
     @GetMapping("/pokemon/all")
-    public List<PokemonModel> all() {
+    public List<PokemonModel> getAll() {
         return pokemonRepository.findAll();
     }
 
     @GetMapping("/pokemon/random")
-    public PokemonModel random() {
+    public PokemonModel getRandom() {
         int totalPokemons = (int) pokemonRepository.count();
         if (totalPokemons == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no pokemons.");

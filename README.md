@@ -5,6 +5,12 @@ Spring Boot multi-module project integrated with gradle, docker, docker-compose,
 Docker is required if you want to make use of the `buildDockerImage` gradle task and `docker-compose.yml` file. 
 
 ## Build
+To run the tests:
+```bash
+./gradlew test
+```
+
+
 To build the jars for each module:
 ```bash
 ./gradlew build 

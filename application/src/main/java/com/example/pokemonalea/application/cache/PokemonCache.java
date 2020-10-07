@@ -26,10 +26,14 @@ public class PokemonCache {
 
     Logger logger = LoggerFactory.getLogger(PokemonCache.class);
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+    private final PokemonController pokemonController;
 
     @Autowired
-    private PokemonController pokemonController;
+    public PokemonCache(PokemonController pokemonController, RestTemplate restTemplate) {
+        this.pokemonController = pokemonController;
+        this.restTemplate = restTemplate;
+    }
 
     public void start() {
         List<String> pokemonNames = getRedBluePokemons();

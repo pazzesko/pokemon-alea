@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 
@@ -28,6 +29,11 @@ public class Application {
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
+	}
+
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
 	}
 
 	@PostConstruct
