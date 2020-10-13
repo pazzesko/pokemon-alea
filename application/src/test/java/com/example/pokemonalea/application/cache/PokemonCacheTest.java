@@ -1,17 +1,16 @@
 package com.example.pokemonalea.application.cache;
 
+import com.example.pokemonalea.application.pokeapi.PokeApiClient;
 import com.example.pokemonalea.application.service.PokemonController;
 import com.example.pokemonalea.domain.dto.PokemonDTO;
-import com.example.pokemonalea.domain.response.PokeApiKeysResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -19,7 +18,7 @@ import static org.mockito.Mockito.*;
 class PokemonCacheTest {
 
     @Mock
-    private RestTemplate restTemplate;
+    private PokeApiClient pokeApiClient;
     @Mock
     private PokemonController pokemonController;
 
@@ -27,13 +26,12 @@ class PokemonCacheTest {
 
     @BeforeEach
     void initPokemonCache() {
-        pokemonCache = new PokemonCache(pokemonController, restTemplate);
+        pokemonCache = new PokemonCache(pokemonController, pokeApiClient);
     }
 
     @Test
-    void whenGetRedBluePokemonsResponseIsNullThenNoInserts() {
-        String url = "https://pokeapi.co/api/v2/generation/1";
-        when(restTemplate.getForObject(url, PokeApiKeysResponse.class)).thenReturn(null);
+    void whenGetPokemonNamesByGenerationIsEmptyThenNoInserts() {
+        when(pokeApiClient.getPokemonNamesByGeneration(1)).thenReturn(Collections.emptyList());
 
         pokemonCache.start();
 
@@ -41,9 +39,10 @@ class PokemonCacheTest {
     }
 
     @Test
-    void whenGetRedBluePokemonsThrowsRestClientExceptionThenNoInserts() {
-        String url = "https://pokeapi.co/api/v2/generation/1";
-        when(restTemplate.getForObject(url, PokeApiKeysResponse.class)).thenThrow(RestClientException.class);
+    void whenGetPokemonsByVersionIsEmptyThenNoInserts() {
+        List<String> generationResponse = Collections.singletonList("ALEA");
+        when(pokeApiClient.getPokemonNamesByGeneration(1)).thenReturn(generationResponse);
+        when(pokeApiClient.getPokemonsByVersion(generationResponse, "red")).thenReturn(Collections.emptyList());
 
         pokemonCache.start();
 
@@ -51,63 +50,22 @@ class PokemonCacheTest {
     }
 
     @Test
-    void whenGetRedPokemonsResponseIsNullThenNoInserts() {
-        mockGenerationResponse();
+    void whenPokemonRedReturnsPokemonsThenPokemonsInserted() {
+        List<String> generationResponse = Collections.singletonList("PIKACHU");
+        when(pokeApiClient.getPokemonNamesByGeneration(1)).thenReturn(generationResponse);
+        PokemonDTO expectedPokemon = createPokemonDTO("PIKACHU", "red");
 
-        String urlPokemon = "https://pokeapi.co/api/v2/pokemon/ALEA";
-        when(restTemplate.getForObject(urlPokemon, PokemonDTO.class)).thenReturn(null);
-
-        pokemonCache.start();
-
-        verify(pokemonController, never()).create(any(PokemonDTO.class));
-    }
-
-    @Test
-    void whenGetRedPokemonsThrowsRestClientExceptionThenNoInserts() {
-        mockGenerationResponse();
-
-        String urlPokemon = "https://pokeapi.co/api/v2/pokemon/ALEA";
-        when(restTemplate.getForObject(urlPokemon, PokemonDTO.class)).thenThrow(RestClientException.class);
-
-        pokemonCache.start();
-
-        verify(pokemonController, never()).create(any(PokemonDTO.class));
-    }
-
-    @Test
-    void whenPokemonNotRedThenPokemonNotInserted() {
-        mockGenerationResponse();
-        mockPokemonResponse("blue");
-
-        pokemonCache.start();
-
-        verify(pokemonController, never()).create(any(PokemonDTO.class));
-    }
-
-    @Test
-    void whenPokemonRedThenPokemonInserted() {
-        mockGenerationResponse();
-        PokemonDTO expectedPokemon = mockPokemonResponse("red");
+        when(pokeApiClient.getPokemonsByVersion(generationResponse, "red")).thenReturn(Collections.singletonList(expectedPokemon));
 
         pokemonCache.start();
 
         verify(pokemonController, times(1)).create(expectedPokemon);
     }
 
-    private void mockGenerationResponse() {
-        PokeApiKeysResponse response = new PokeApiKeysResponse();
-        PokeApiKeysResponse.PokemonSpecies pokemonSpecies = new PokeApiKeysResponse.PokemonSpecies();
-        pokemonSpecies.setName("ALEA");
-        response.setPokemonSpecies(Collections.singletonList(pokemonSpecies));
-
-        String urlGeneration = "https://pokeapi.co/api/v2/generation/1";
-        when(restTemplate.getForObject(urlGeneration, PokeApiKeysResponse.class)).thenReturn(response);
-    }
-
-    private PokemonDTO mockPokemonResponse(String versionName) {
+    private PokemonDTO createPokemonDTO(String pokemonName, String versionName) {
         PokemonDTO pokemonDTO = new PokemonDTO();
         pokemonDTO.setId(1L);
-        pokemonDTO.setName("ALEA");
+        pokemonDTO.setName(pokemonName);
         pokemonDTO.setBaseExperience(1);
         pokemonDTO.setHeight(1);
         pokemonDTO.setWeight(1);
@@ -118,9 +76,6 @@ class PokemonCacheTest {
         gameIndex.setVersion(version);
 
         pokemonDTO.setGameIndices(Collections.singletonList(gameIndex));
-
-        String urlPokemon = "https://pokeapi.co/api/v2/pokemon/ALEA";
-        when(restTemplate.getForObject(urlPokemon, PokemonDTO.class)).thenReturn(pokemonDTO);
 
         return pokemonDTO;
     }
