@@ -30,6 +30,7 @@ public class PokemonCache {
     public void start() {
         List<String> pokemonNames = pokeApiClient.getPokemonNamesByGeneration(GENERATION_RED_BLUE);
         List<PokemonDTO> pokemonDTOs = pokeApiClient.getPokemonsByVersion(pokemonNames, RED_VERSION);
+        pokeApiClient.shutdown();
         insertPokemons(pokemonDTOs);
         logger.info("cache filled with pokemons");
     }

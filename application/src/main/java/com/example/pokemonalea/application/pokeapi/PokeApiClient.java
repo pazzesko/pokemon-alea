@@ -5,6 +5,7 @@ import com.example.pokemonalea.domain.response.PokeApiKeysResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -23,6 +25,7 @@ public class PokeApiClient {
     Logger logger = LoggerFactory.getLogger(PokeApiClient.class);
 
     private final RestTemplate restTemplate;
+    private final ExecutorService executor = Executors.newFixedThreadPool(10, new CustomizableThreadFactory("poke-api-"));
 
     @Autowired
     public PokeApiClient(RestTemplate restTemplate) {
@@ -36,7 +39,7 @@ public class PokeApiClient {
             response = restTemplate.getForObject(url, PokeApiKeysResponse.class);
             logger.info("Request: " + url);
         } catch (RestClientException e) {
-            logger.error("Error in Request: " + url + " with message: " + e.getMessage());
+            logger.error("Error in Request: " + url, e);
         }
 
         return response != null
@@ -47,38 +50,84 @@ public class PokeApiClient {
     }
 
     public List<PokemonDTO> getPokemonsByVersion(List<String> pokemonNames, String version) {
-        List<PokemonDTO> pokemonDTOS = new ArrayList<>();
+        List<Future<PokemonDTO>> futurePokemonDTOS = createGetPokemonTasks(pokemonNames, version);
+        return collectGetPokemonTasks(futurePokemonDTOS);
+    }
+
+    private List<Future<PokemonDTO>> createGetPokemonTasks(List<String> pokemonNames, String version) {
+        List<Future<PokemonDTO>> futurePokemonDTOS = new ArrayList<>();
+
         for (String pokemonName: pokemonNames) {
             String url = BASE_URL + "/pokemon/" + pokemonName;
+            GetPokemonDTOTask task = new GetPokemonDTOTask(restTemplate, url, version);
+            futurePokemonDTOS.add(executor.submit(task));
+        }
 
+        return futurePokemonDTOS;
+    }
+
+    private List<PokemonDTO> collectGetPokemonTasks(List<Future<PokemonDTO>> futurePokemonDTOS) {
+        List<PokemonDTO> pokemonDTOS = new ArrayList<>();
+
+        for (Future<PokemonDTO> future: futurePokemonDTOS) {
             try {
-                PokemonDTO pokemon = restTemplate.getForObject(url, PokemonDTO.class);
-
-                if (isVersion(pokemon, version)) {
-                    pokemonDTOS.add(pokemon);
+                PokemonDTO pokemonDTO = future.get(2, TimeUnit.SECONDS);
+                if (pokemonDTO != null) {
+                    pokemonDTOS.add(pokemonDTO);
                 }
-
-                logger.info("Request: " + url);
-            } catch (RestClientException e) {
-                logger.error("Error in Request: " + url + " with message: " + e.getMessage());
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                logger.error("Error in the poke-api task: ", e);
             }
         }
 
         return pokemonDTOS;
     }
 
-    private boolean isVersion(PokemonDTO pokemon, String version) {
-        boolean isVersion = false;
+    public void shutdown() {
+        executor.shutdown();
+    }
 
-        if (pokemon != null) {
-            Optional<PokemonDTO.GameIndex> pokemonVersion = pokemon.getGameIndices()
-                    .stream()
-                    .filter(gameIndex -> version.equals(gameIndex.getVersion().getName()))
-                    .findFirst();
+    class GetPokemonDTOTask implements Callable<PokemonDTO> {
 
-            isVersion = pokemonVersion.isPresent();
+        private final RestTemplate restTemplate;
+        private final String url;
+        private final String version;
+
+        public GetPokemonDTOTask(RestTemplate restTemplate, String url, String version) {
+            this.restTemplate = restTemplate;
+            this.url = url;
+            this.version = version;
         }
 
-        return isVersion;
+        public PokemonDTO call() {
+            try {
+                PokemonDTO pokemon = restTemplate.getForObject(url, PokemonDTO.class);
+
+                logger.info("Request: " + url);
+
+                return isVersion(pokemon, version)
+                        ? pokemon
+                        : null;
+
+            } catch (RestClientException e) {
+                logger.error("Error in Request: " + url , e);
+                return null;
+            }
+        }
+
+        private boolean isVersion(PokemonDTO pokemon, String version) {
+            boolean isVersion = false;
+
+            if (pokemon != null) {
+                Optional<PokemonDTO.GameIndex> pokemonVersion = pokemon.getGameIndices()
+                        .stream()
+                        .filter(gameIndex -> version.equals(gameIndex.getVersion().getName()))
+                        .findFirst();
+
+                isVersion = pokemonVersion.isPresent();
+            }
+
+            return isVersion;
+        }
     }
 }
