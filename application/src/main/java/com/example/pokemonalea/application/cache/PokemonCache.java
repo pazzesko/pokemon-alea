@@ -28,8 +28,12 @@ public class PokemonCache {
     }
 
     public void start() {
+        long pokeApiStart = System.currentTimeMillis();
         List<String> pokemonNames = pokeApiClient.getPokemonNamesByGeneration(GENERATION_RED_BLUE);
         List<PokemonDTO> pokemonDTOs = pokeApiClient.getPokemonsByVersion(pokemonNames, RED_VERSION);
+        long pokeApiFinish = System.currentTimeMillis();
+
+        logger.info("PokeApi pokemons obtained in: " + (pokeApiFinish - pokeApiStart) + " ms");
         pokeApiClient.shutdown();
         insertPokemons(pokemonDTOs);
         logger.info("cache filled with pokemons");

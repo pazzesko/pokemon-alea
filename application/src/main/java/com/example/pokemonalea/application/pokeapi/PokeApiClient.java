@@ -25,7 +25,7 @@ public class PokeApiClient {
     Logger logger = LoggerFactory.getLogger(PokeApiClient.class);
 
     private final RestTemplate restTemplate;
-    private final ExecutorService executor = Executors.newFixedThreadPool(10, new CustomizableThreadFactory("poke-api-"));
+    private final ExecutorService executor = Executors.newFixedThreadPool(20, new CustomizableThreadFactory("poke-api-"));
 
     @Autowired
     public PokeApiClient(RestTemplate restTemplate) {
