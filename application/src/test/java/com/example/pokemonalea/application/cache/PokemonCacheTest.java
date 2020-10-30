@@ -1,13 +1,15 @@
 package com.example.pokemonalea.application.cache;
 
-import com.example.pokemonalea.application.pokeapi.PokeApiClient;
-import com.example.pokemonalea.application.service.PokemonController;
 import com.example.pokemonalea.domain.dto.PokemonDTO;
+import com.example.pokemonalea.domain.model.PokemonModel;
+import com.example.pokemonalea.domain.pokeapi.PokeApiClient;
+import com.example.pokemonalea.persistence.repository.PokemonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,13 +22,15 @@ class PokemonCacheTest {
     @Mock
     private PokeApiClient pokeApiClient;
     @Mock
-    private PokemonController pokemonController;
+    private PokemonRepository pokemonRepository;
+
+    private final ModelMapper modelMapper = new ModelMapper();
 
     private PokemonCache pokemonCache;
 
     @BeforeEach
     void initPokemonCache() {
-        pokemonCache = new PokemonCache(pokemonController, pokeApiClient);
+        pokemonCache = new PokemonCache(pokemonRepository, pokeApiClient, modelMapper);
     }
 
     @Test
@@ -35,7 +39,7 @@ class PokemonCacheTest {
 
         pokemonCache.start();
 
-        verify(pokemonController, never()).create(any(PokemonDTO.class));
+        verify(pokemonRepository, never()).save(any(PokemonModel.class));
     }
 
     @Test
@@ -46,20 +50,21 @@ class PokemonCacheTest {
 
         pokemonCache.start();
 
-        verify(pokemonController, never()).create(any(PokemonDTO.class));
+        verify(pokemonRepository, never()).save(any(PokemonModel.class));
     }
 
     @Test
     void whenPokemonRedReturnsPokemonsThenPokemonsInserted() {
         List<String> generationResponse = Collections.singletonList("PIKACHU");
         when(pokeApiClient.getPokemonNamesByGeneration(1)).thenReturn(generationResponse);
-        PokemonDTO expectedPokemon = createPokemonDTO("PIKACHU", "red");
+        PokemonDTO pokemonRed = createPokemonDTO("PIKACHU", "red");
+        PokemonModel expectedPokemon = modelMapper.map(pokemonRed, PokemonModel.class);
 
-        when(pokeApiClient.getPokemonsByVersion(generationResponse, "red")).thenReturn(Collections.singletonList(expectedPokemon));
+        when(pokeApiClient.getPokemonsByVersion(generationResponse, "red")).thenReturn(Collections.singletonList(pokemonRed));
 
         pokemonCache.start();
 
-        verify(pokemonController, times(1)).create(expectedPokemon);
+        verify(pokemonRepository, times(1)).save(refEq(expectedPokemon));
     }
 
     private PokemonDTO createPokemonDTO(String pokemonName, String versionName) {
@@ -74,8 +79,6 @@ class PokemonCacheTest {
         version.setName(versionName);
         PokemonDTO.GameIndex gameIndex = new PokemonDTO.GameIndex();
         gameIndex.setVersion(version);
-
-        pokemonDTO.setGameIndices(Collections.singletonList(gameIndex));
 
         return pokemonDTO;
     }

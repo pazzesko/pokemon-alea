@@ -1,10 +1,10 @@
 package com.example.pokemonalea.application.pokeapi;
 
 import com.example.pokemonalea.domain.dto.PokemonDTO;
+import com.example.pokemonalea.domain.pokeapi.PokeApiClient;
 import com.example.pokemonalea.domain.response.PokeApiKeysResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -17,21 +17,21 @@ import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
-@Component
-public class PokeApiClient {
+@Component("pokeApiClientImpl")
+public class PokeApiClientImpl implements PokeApiClient {
 
     private static final String BASE_URL = "https://pokeapi.co/api/v2";
 
-    Logger logger = LoggerFactory.getLogger(PokeApiClient.class);
+    Logger logger = LoggerFactory.getLogger(PokeApiClientImpl.class);
 
     private final RestTemplate restTemplate;
     private final ExecutorService executor = Executors.newFixedThreadPool(20, new CustomizableThreadFactory("poke-api-"));
 
-    @Autowired
-    public PokeApiClient(RestTemplate restTemplate) {
+    public PokeApiClientImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
+    @Override
     public List<String> getPokemonNamesByGeneration(int generationId) {
         PokeApiKeysResponse response = null;
         String url = BASE_URL + "/generation/" + generationId;
@@ -49,6 +49,7 @@ public class PokeApiClient {
                 : Collections.emptyList();
     }
 
+    @Override
     public List<PokemonDTO> getPokemonsByVersion(List<String> pokemonNames, String version) {
         List<Future<PokemonDTO>> futurePokemonDTOS = createGetPokemonTasks(pokemonNames, version);
         return collectGetPokemonTasks(futurePokemonDTOS);

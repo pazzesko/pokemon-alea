@@ -1,11 +1,13 @@
 package com.example.pokemonalea.application.cache;
 
-import com.example.pokemonalea.application.pokeapi.PokeApiClient;
-import com.example.pokemonalea.application.service.PokemonController;
 import com.example.pokemonalea.domain.dto.PokemonDTO;
+import com.example.pokemonalea.domain.model.PokemonModel;
+import com.example.pokemonalea.domain.pokeapi.PokeApiClient;
+import com.example.pokemonalea.persistence.repository.PokemonRepository;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,12 +21,15 @@ public class PokemonCache {
     Logger logger = LoggerFactory.getLogger(PokemonCache.class);
 
     private final PokeApiClient pokeApiClient;
-    private final PokemonController pokemonController;
+    private final PokemonRepository pokemonRepository;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    public PokemonCache(PokemonController pokemonController, PokeApiClient pokeApiClient) {
-        this.pokemonController = pokemonController;
+    public PokemonCache(PokemonRepository pokemonRepository,
+                        @Qualifier("pokeApiClientImpl") PokeApiClient pokeApiClient,
+                        ModelMapper modelMapper) {
+        this.pokemonRepository = pokemonRepository;
         this.pokeApiClient = pokeApiClient;
+        this.modelMapper = modelMapper;
     }
 
     public void start() {
@@ -41,7 +46,8 @@ public class PokemonCache {
 
     private void insertPokemons(List<PokemonDTO> pokemons) {
         for (PokemonDTO pokemon: pokemons) {
-            pokemonController.create(pokemon);
+            PokemonModel pokemonModel = modelMapper.map(pokemon, PokemonModel.class);
+            pokemonRepository.save(pokemonModel);
         }
     }
 }

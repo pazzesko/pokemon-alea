@@ -116,7 +116,7 @@ class PokemonControllerTest {
         // when
         // http call
         MockHttpServletResponse response = mvc.perform(
-                get("/pokemon/topWeight")
+                get("/pokemons/topWeight")
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn()
                 .getResponse();
@@ -144,7 +144,7 @@ class PokemonControllerTest {
         // when
         // http call
         MockHttpServletResponse response = mvc.perform(
-                get("/pokemon/topHeight")
+                get("/pokemons/topHeight")
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn()
                 .getResponse();
@@ -172,7 +172,7 @@ class PokemonControllerTest {
         // when
         // http call
         MockHttpServletResponse response = mvc.perform(
-                get("/pokemon/topBaseExperience")
+                get("/pokemons/topBaseExperience")
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn()
                 .getResponse();
@@ -200,12 +200,12 @@ class PokemonControllerTest {
         // when
         // http call
         MockHttpServletResponse response = mvc.perform(
-                get("/pokemon/all")
+                get("/pokemons")
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn()
                 .getResponse();
         // controller call
-        List<PokemonModel> controllerAll = pokemonController.getAll();
+        List<PokemonModel> controllerAll = pokemonController.getPokemons();
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());

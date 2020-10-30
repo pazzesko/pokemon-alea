@@ -17,22 +17,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PokeApiClientTest {
+class PokeApiClientImplTest {
 
     @Mock
     private RestTemplate restTemplate;
 
-    private PokeApiClient pokeApiClient;
+    private PokeApiClientImpl pokeApiClientImpl;
 
     @BeforeEach
     void initPokeApi() {
-        pokeApiClient = new PokeApiClient(restTemplate);
+        pokeApiClientImpl = new PokeApiClientImpl(restTemplate);
     }
 
     @Test
     void whenGetPokemonNamesByGenerationThrowsExceptionThenReturnEmptyList() {
         when(restTemplate.getForObject("https://pokeapi.co/api/v2/generation/99", PokeApiKeysResponse.class)).thenThrow(RestClientException.class);
-        assertThat(pokeApiClient.getPokemonNamesByGeneration(99)).isEmpty();
+        assertThat(pokeApiClientImpl.getPokemonNamesByGeneration(99)).isEmpty();
     }
 
     @Test
@@ -43,13 +43,13 @@ class PokeApiClientTest {
         response.setPokemonSpecies(Collections.singletonList(pokemonSpecies));
 
         when(restTemplate.getForObject("https://pokeapi.co/api/v2/generation/99", PokeApiKeysResponse.class)).thenReturn(response);
-        assertThat(pokeApiClient.getPokemonNamesByGeneration(99)).containsExactly("ALEA");
+        assertThat(pokeApiClientImpl.getPokemonNamesByGeneration(99)).containsExactly("ALEA");
     }
 
     @Test
     void whenGetPokemonsByVersionThrowsExceptionThenReturnEmptyList() {
         when(restTemplate.getForObject("https://pokeapi.co/api/v2/pokemon/pikachu", PokemonDTO.class)).thenThrow(RestClientException.class);
-        assertThat(pokeApiClient.getPokemonsByVersion(Collections.singletonList("pikachu"), "yellow")).isEmpty();
+        assertThat(pokeApiClientImpl.getPokemonsByVersion(Collections.singletonList("pikachu"), "yellow")).isEmpty();
     }
 
     @Test
@@ -60,7 +60,7 @@ class PokeApiClientTest {
         when(restTemplate.getForObject("https://pokeapi.co/api/v2/pokemon/pikachu", PokemonDTO.class)).thenReturn(pokemonYellow);
         when(restTemplate.getForObject("https://pokeapi.co/api/v2/pokemon/charmander", PokemonDTO.class)).thenReturn(pokemonRed);
 
-        assertThat(pokeApiClient.getPokemonsByVersion(Arrays.asList("pikachu", "charmander"), "yellow")).containsExactly(pokemonYellow);
+        assertThat(pokeApiClientImpl.getPokemonsByVersion(Arrays.asList("pikachu", "charmander"), "yellow")).containsExactly(pokemonYellow);
     }
 
     private PokemonDTO createPokemonDTO(String name, String versionName) {

@@ -2,9 +2,9 @@ package com.example.pokemonalea.application.service;
 
 import com.example.pokemonalea.domain.dto.PokemonDTO;
 import com.example.pokemonalea.domain.model.PokemonModel;
+import com.example.pokemonalea.domain.service.PokemonService;
 import com.example.pokemonalea.persistence.repository.PokemonRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -14,33 +14,37 @@ import java.util.List;
 import java.util.Random;
 
 @RestController
-public class PokemonController {
+public class PokemonController implements PokemonService {
 
     private final PokemonRepository pokemonRepository;
     private final ModelMapper modelMapper;
+    private final Random random = new Random();
 
-    @Autowired
     public PokemonController(PokemonRepository pokemonRepository, ModelMapper modelMapper) {
         this.pokemonRepository = pokemonRepository;
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/pokemon/topWeight")
+    @GetMapping("/pokemons/topWeight")
+    @Override
     public List<PokemonModel>  getTopWeight() {
         return pokemonRepository.findTop5ByOrderByWeightDesc();
     }
 
-    @GetMapping("/pokemon/topHeight")
+    @GetMapping("/pokemons/topHeight")
+    @Override
     public List<PokemonModel>  getTopHeight() {
         return pokemonRepository.findTop5ByOrderByHeightDesc();
     }
 
-    @GetMapping("/pokemon/topBaseExperience")
+    @GetMapping("/pokemons/topBaseExperience")
+    @Override
     public List<PokemonModel>  getTopBaseExperience() {
         return pokemonRepository.findTop5ByOrderByBaseExperienceDesc();
     }
 
     @GetMapping("/pokemon/{id}")
+    @Override
     public PokemonModel getPokemonById(@PathVariable Long id) {
         return pokemonRepository
                 .findById(id)
@@ -48,23 +52,26 @@ public class PokemonController {
                         "The Pokemon with id=" + id + " doesn't exist."));
     }
 
-    @GetMapping("/pokemon/all")
-    public List<PokemonModel> getAll() {
+    @GetMapping("/pokemons")
+    @Override
+    public List<PokemonModel> getPokemons() {
         return pokemonRepository.findAll();
     }
 
     @GetMapping("/pokemon/random")
+    @Override
     public PokemonModel getRandom() {
         int totalPokemons = (int) pokemonRepository.count();
         if (totalPokemons == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no pokemons.");
         } else {
-            return pokemonRepository.findAll().get(new Random().nextInt(totalPokemons));
+            return pokemonRepository.findAll().get(random.nextInt(totalPokemons));
         }
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/pokemon/create")
+    @Override
     public PokemonModel create(@RequestBody @Valid PokemonDTO pokemon) {
         PokemonModel pokemonModel = modelMapper.map(pokemon, PokemonModel.class);
         return pokemonRepository.save(pokemonModel);
