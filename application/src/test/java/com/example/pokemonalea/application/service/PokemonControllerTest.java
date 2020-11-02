@@ -332,31 +332,28 @@ class PokemonControllerTest {
     }
 
     private PokemonModel createPokemonModel(Long id, String name, Integer baseExperience, Integer height, Integer weight) {
-        PokemonModel pokemonModel = new PokemonModel();
-        pokemonModel.setId(id);
-        pokemonModel.setName(name);
-        pokemonModel.setBaseExperience(baseExperience);
-        pokemonModel.setHeight(height);
-        pokemonModel.setWeight(weight);
-
-        return pokemonModel;
+        return PokemonModel.builder()
+                .id(id)
+                .name(name)
+                .baseExperience(baseExperience)
+                .height(height)
+                .weight(weight)
+                .build();
     }
 
     private PokemonDTO createPokemonDTO(Long id, String name, Integer baseExperience, Integer height, Integer weight) {
-        PokemonDTO pokemonDTO = new PokemonDTO();
-        pokemonDTO.setId(id);
-        pokemonDTO.setName(name);
-        pokemonDTO.setBaseExperience(baseExperience);
-        pokemonDTO.setHeight(height);
-        pokemonDTO.setWeight(weight);
-
         PokemonDTO.Version version = new PokemonDTO.Version();
         version.setName("red");
         PokemonDTO.GameIndex gameIndex = new PokemonDTO.GameIndex();
         gameIndex.setVersion(version);
 
-        pokemonDTO.setGameIndices(Collections.singletonList(gameIndex));
-
-        return pokemonDTO;
+        return PokemonDTO.builder()
+                .id(id)
+                .name(name)
+                .baseExperience(baseExperience)
+                .height(height)
+                .weight(weight)
+                .gameIndices(Collections.singletonList(gameIndex))
+                .build();
     }
 }

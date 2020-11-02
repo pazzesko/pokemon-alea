@@ -2,32 +2,25 @@ package com.example.pokemonalea.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PokeApiKeysResponse {
     @JsonProperty("pokemon_species")
     private List<PokemonSpecies> pokemonSpecies;
 
-    public List<PokemonSpecies> getPokemonSpecies() {
-        return pokemonSpecies;
-    }
-
-    public void setPokemonSpecies(List<PokemonSpecies> pokemonSpecies) {
-        this.pokemonSpecies = pokemonSpecies;
-    }
-
+    @Getter
+    @Setter
+    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class PokemonSpecies {
         private String name;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
     }
 }

@@ -68,18 +68,18 @@ class PokemonCacheTest {
     }
 
     private PokemonDTO createPokemonDTO(String pokemonName, String versionName) {
-        PokemonDTO pokemonDTO = new PokemonDTO();
-        pokemonDTO.setId(1L);
-        pokemonDTO.setName(pokemonName);
-        pokemonDTO.setBaseExperience(1);
-        pokemonDTO.setHeight(1);
-        pokemonDTO.setWeight(1);
-
         PokemonDTO.Version version = new PokemonDTO.Version();
         version.setName(versionName);
         PokemonDTO.GameIndex gameIndex = new PokemonDTO.GameIndex();
         gameIndex.setVersion(version);
 
-        return pokemonDTO;
+        return PokemonDTO.builder()
+                .id(1L)
+                .name(pokemonName)
+                .baseExperience(1)
+                .height(1)
+                .weight(1)
+                .gameIndices(Collections.singletonList(gameIndex))
+                .build();
     }
 }

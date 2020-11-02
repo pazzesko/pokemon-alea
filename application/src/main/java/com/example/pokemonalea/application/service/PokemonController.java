@@ -76,5 +76,4 @@ public class PokemonController implements PokemonService {
         PokemonModel pokemonModel = modelMapper.map(pokemon, PokemonModel.class);
         return pokemonRepository.save(pokemonModel);
     }
-
 }

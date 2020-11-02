@@ -64,20 +64,18 @@ class PokeApiClientImplTest {
     }
 
     private PokemonDTO createPokemonDTO(String name, String versionName) {
-        PokemonDTO pokemonDTO = new PokemonDTO();
-        pokemonDTO.setId(1L);
-        pokemonDTO.setName(name);
-        pokemonDTO.setBaseExperience(1);
-        pokemonDTO.setHeight(1);
-        pokemonDTO.setWeight(1);
-
         PokemonDTO.Version version = new PokemonDTO.Version();
         version.setName(versionName);
         PokemonDTO.GameIndex gameIndex = new PokemonDTO.GameIndex();
         gameIndex.setVersion(version);
 
-        pokemonDTO.setGameIndices(Collections.singletonList(gameIndex));
-
-        return pokemonDTO;
+        return PokemonDTO.builder()
+                .id(1L)
+                .name(name)
+                .baseExperience(1)
+                .height(1)
+                .weight(1)
+                .gameIndices(Collections.singletonList(gameIndex))
+                .build();
     }
 }

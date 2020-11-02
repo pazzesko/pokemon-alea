@@ -2,10 +2,16 @@ package com.example.pokemonalea.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PokemonDTO {
 
@@ -29,77 +35,19 @@ public class PokemonDTO {
     @JsonProperty("game_indices")
     private List<GameIndex> gameIndices;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getBaseExperience() {
-        return baseExperience;
-    }
-
-    public void setBaseExperience(Integer baseExperience) {
-        this.baseExperience = baseExperience;
-    }
-
-    public Integer getHeight() {
-        return height;
-    }
-
-    public void setHeight(Integer height) {
-        this.height = height;
-    }
-
-    public Integer getWeight() {
-        return weight;
-    }
-
-    public void setWeight(Integer weight) {
-        this.weight = weight;
-    }
-
-    public List<GameIndex> getGameIndices() {
-        return gameIndices;
-    }
-
-    public void setGameIndices(List<GameIndex> gameIndices) {
-        this.gameIndices = gameIndices;
-    }
-
+    @Getter
+    @Setter
+    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class GameIndex {
         private Version version;
-
-        public Version getVersion() {
-            return version;
-        }
-
-        public void setVersion(Version version) {
-            this.version = version;
-        }
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Version {
         private String name;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
     }
 }
