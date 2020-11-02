@@ -1,5 +1,5 @@
 # pokemon-alea
-Spring Boot multi-module project integrated with gradle, docker, docker-compose, h2database and swaggerUI.
+Spring Boot multi-module project integrated with gradle, docker, docker-compose, h2database, swaggerUI and lombok.
 
 ## Requirements
 Docker is required if you want to make use of the `buildDockerImage` gradle task and `docker-compose.yml` file. 
