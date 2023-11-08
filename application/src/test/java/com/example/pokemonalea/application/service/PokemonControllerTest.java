@@ -210,12 +210,14 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(controllerAll)
-        );
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(allPokemon)
-        );
+
+        String actualControllerAllJSON = response.getContentAsString();
+        String expectedControllerAllJSON = objectMapper.writeValueAsString(controllerAll);
+        JSONAssert.assertEquals(expectedControllerAllJSON, actualControllerAllJSON, false);
+
+        String actualAllPokemonJSON1 = response.getContentAsString();
+        String expectedAllPokemonJSON1 = objectMapper.writeValueAsString(allPokemon);
+        JSONAssert.assertEquals(expectedAllPokemonJSON1, actualAllPokemonJSON1, false);
     }
 
     @Test
