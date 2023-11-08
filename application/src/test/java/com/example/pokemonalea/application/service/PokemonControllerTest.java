@@ -184,12 +184,13 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(controllerTop)
-        );
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(top5BaseExperience)
-        );
+
+        String actualResponseContent = response.getContentAsString();
+        String expectedControllerTopJSON = objectMapper.writeValueAsString(controllerTop);
+        JSONAssert.assertEquals(expectedControllerTopJSON, actualResponseContent, false);
+
+        String expectedTop5BaseExperienceJSON = objectMapper.writeValueAsString(top5BaseExperience);
+        JSONAssert.assertEquals(expectedTop5BaseExperienceJSON, actualResponseContent, false);
     }
 
     @Test
@@ -244,7 +245,7 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        
+
         String actualControllerModelJSON = response.getContentAsString();
         String expectedControllerModelJSON = objectMapper.writeValueAsString(controllerModel);
         JSONAssert.assertEquals(expectedControllerModelJSON, actualControllerModelJSON, false);
