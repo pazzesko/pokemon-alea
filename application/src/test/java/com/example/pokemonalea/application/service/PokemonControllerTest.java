@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.Validator;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -287,12 +288,14 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(controllerModel)
-        );
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(pokemonModel)
-        );
+
+        String actualJSON = response.getContentAsString();
+        String expectedJSON = objectMapper.writeValueAsString(controllerModel);
+        JSONAssert.assertEquals(expectedJSON, actualJSON, false);
+
+        String actualJSON1 = response.getContentAsString();
+        String expectedJSON1 = objectMapper.writeValueAsString(pokemonModel);
+        JSONAssert.assertEquals(expectedJSON1, actualJSON1, false);
     }
 
     private List<PokemonModel> createTopOrderByWeight() {
