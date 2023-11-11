@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.Validator;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,12 +78,14 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(controllerModel)
-        );
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(pokemonModel)
-        );
+
+        String actualControllerModelJSON = response.getContentAsString();
+        String expectedControllerModelJSON = objectMapper.writeValueAsString(controllerModel);
+        JSONAssert.assertEquals(expectedControllerModelJSON, actualControllerModelJSON, false); 
+
+        String actualPokemonModelJSON = response.getContentAsString();
+        String expectedPokemonModelJSON = objectMapper.writeValueAsString(pokemonModel);
+        JSONAssert.assertEquals(expectedPokemonModelJSON, actualPokemonModelJSON, false);
     }
 
     @Test
@@ -125,12 +128,13 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(controllerTop)
-        );
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(top5Weight)
-        );
+        
+        String actualResponseContent = response.getContentAsString();
+        String expectedControllerTopJSON = objectMapper.writeValueAsString(controllerTop);
+        JSONAssert.assertEquals(expectedControllerTopJSON, actualResponseContent, false);
+        
+        String expectedTop5WeightJSON = objectMapper.writeValueAsString(top5Weight);
+        JSONAssert.assertEquals(expectedTop5WeightJSON, actualResponseContent, false);
     }
 
     @Test
@@ -153,12 +157,13 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(controllerTop)
-        );
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(top5Height)
-        );
+
+        String actualResponseContent = response.getContentAsString();
+        String expectedControllerTopJSON = objectMapper.writeValueAsString(controllerTop);
+        JSONAssert.assertEquals(expectedControllerTopJSON, actualResponseContent, false);
+
+        String expectedTop5HeightJSON = objectMapper.writeValueAsString(top5Height);
+        JSONAssert.assertEquals(expectedTop5HeightJSON, actualResponseContent, false);
     }
 
     @Test
@@ -181,12 +186,13 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(controllerTop)
-        );
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(top5BaseExperience)
-        );
+
+        String actualResponseContent = response.getContentAsString();
+        String expectedControllerTopJSON = objectMapper.writeValueAsString(controllerTop);
+        JSONAssert.assertEquals(expectedControllerTopJSON, actualResponseContent, false);
+
+        String expectedTop5BaseExperienceJSON = objectMapper.writeValueAsString(top5BaseExperience);
+        JSONAssert.assertEquals(expectedTop5BaseExperienceJSON, actualResponseContent, false);
     }
 
     @Test
@@ -209,12 +215,14 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(controllerAll)
-        );
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(allPokemon)
-        );
+
+        String actualControllerAllJSON = response.getContentAsString();
+        String expectedControllerAllJSON = objectMapper.writeValueAsString(controllerAll);
+        JSONAssert.assertEquals(expectedControllerAllJSON, actualControllerAllJSON, false);
+
+        String actualAllPokemonJSON1 = response.getContentAsString();
+        String expectedAllPokemonJSON1 = objectMapper.writeValueAsString(allPokemon);
+        JSONAssert.assertEquals(expectedAllPokemonJSON1, actualAllPokemonJSON1, false);
     }
 
     @Test
@@ -239,12 +247,14 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(controllerModel)
-        );
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(pokemonModel)
-        );
+
+        String actualControllerModelJSON = response.getContentAsString();
+        String expectedControllerModelJSON = objectMapper.writeValueAsString(controllerModel);
+        JSONAssert.assertEquals(expectedControllerModelJSON, actualControllerModelJSON, false);
+
+        String actualPokemonModelJSON = response.getContentAsString();
+        String expectedPokemonModelJSON = objectMapper.writeValueAsString(pokemonModel);
+        JSONAssert.assertEquals(expectedPokemonModelJSON, actualPokemonModelJSON, false);
     }
 
     @Test
@@ -287,12 +297,14 @@ class PokemonControllerTest {
 
         // then
         assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value());
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(controllerModel)
-        );
-        assertThat(response.getContentAsString()).isEqualTo(
-                objectMapper.writeValueAsString(pokemonModel)
-        );
+
+        String actualJSON = response.getContentAsString();
+        String expectedJSON = objectMapper.writeValueAsString(controllerModel);
+        JSONAssert.assertEquals(expectedJSON, actualJSON, false);
+
+        String actualJSON1 = response.getContentAsString();
+        String expectedJSON1 = objectMapper.writeValueAsString(pokemonModel);
+        JSONAssert.assertEquals(expectedJSON1, actualJSON1, false);
     }
 
     private List<PokemonModel> createTopOrderByWeight() {
